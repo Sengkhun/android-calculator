@@ -9,18 +9,15 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private TextView displayTextView;
-    private Double result;
-    private String lastOp;
-    private Boolean clear;
+    private String result;
+    private CalculatorMind cal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        result = 0.0;
-        lastOp = "";
-        clear = false;
+        cal = new CalculatorMind();
         displayTextView = (TextView) findViewById(R.id.result);
 
     }
@@ -28,110 +25,38 @@ public class MainActivity extends AppCompatActivity {
     // Function that handle the operator
     public void operation(View view) {
 
-        int opId;
-        Double currentValue;
-
-        opId = view.getId();
-        Button opButton = (Button) findViewById(opId);
-
+        int opId = view.getId();
+        Button opButton = findViewById(opId);
         String currentOp = opButton.getText().toString();
-        currentValue = Double.parseDouble(displayTextView.getText().toString());
 
-        result = calculate(result, currentValue, lastOp);
-
-        lastOp = currentOp;
-        displayTextView.setText(fmt(result));
-        clear = true;
-
-        if (currentOp.equals("=")) {
-
-            lastOp = "";
-            result = 0.0;
-
-        }
-
-    }
-
-    // Function that do the operation
-    public Double calculate(Double n1, Double n2, String op) {
-
-        switch (op) {
-
-            case "+":
-                return n1 + n2;
-
-            case "-":
-                return n1 - n2;
-
-            case "x":
-                return n1 * n2;
-
-            case "/":
-                return n1 / n2;
-
-            case "%":
-                return n1 % n2;
-
-        }
-
-        return n1 + n2;
+        result = cal.operation( currentOp );
+        displayTextView.setText( result );
 
     }
 
     // Function that handle the button number
     public void typeDigit(View view) {
 
-        int digitButtonId;
-        String currentTextInDislpay;
-        String newTextInDisplay;
-
-        digitButtonId = view.getId();
-        Button typeDigitButton = (Button) findViewById(digitButtonId);
-
+        Button typeDigitButton = findViewById( view.getId() );
         String currentType = typeDigitButton.getText().toString();
-        currentTextInDislpay = displayTextView.getText().toString();
 
-        if (currentTextInDislpay.equals("0")) {
-
-            currentTextInDislpay = "";
-
-        }
-
-        if (currentType.equals("0") && currentTextInDislpay.equals("")) {
-
-            newTextInDisplay = "0";
-
-        } else if (clear) {
-
-            newTextInDisplay = typeDigitButton.getText().toString();
-            clear = false;
-
-        } else {
-
-            newTextInDisplay = currentTextInDislpay + typeDigitButton.getText().toString();
-
-        }
-
-        displayTextView.setText(newTextInDisplay);
+        result = cal.typeDigit( currentType );
+        displayTextView.setText( result );
 
     }
 
     // Function that handle the dot sign
     public void dot(View view) {
 
-        String currentTextInDisplay = displayTextView.getText().toString();
-
-        if (!currentTextInDisplay.contains(".")) {
-
-            displayTextView.setText(currentTextInDisplay + ".");
-
-        }
+        result = cal.dot();
+        displayTextView.setText( result );
 
     }
 
     // Function that clear the display
     public void clear(View view) {
 
+        cal.clear();
         displayTextView.setText("0");
 
     }
@@ -141,28 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
         String str = displayTextView.getText().toString();
 
-        if (str.length() <= 1) {
+        result = cal.del( str );
 
-            str = "0";
-
-        } else {
-
-            str = str.substring(0, str.length() - 1);
-
-        }
-
-        displayTextView.setText(str);
-
-    }
-
-    // Function that handle the fraction to show or not
-    public String fmt(double d)
-    {
-
-        if(d == (long) d)
-            return String.format("%d",(long)d);
-        else
-            return String.format("%s",d);
+        displayTextView.setText( result );
 
     }
 
